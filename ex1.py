@@ -1,2 +1,2 @@
 import streamlit as st
-st.title('안뇽')
+st.title('안녕냥')
