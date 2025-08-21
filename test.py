@@ -53,7 +53,7 @@ if not st.session_state.quiz_started:
         st.info("📝 먼저 단어 리스트를 입력해 주세요! ✏️")
 else:
     total = len(st.session_state.quiz_words)
-    
+
     if st.session_state.current_index >= total:
         st.balloons()
         st.markdown("---")
@@ -87,6 +87,6 @@ else:
                     st.error(f"❌ 아쉽네요! 정답은 👉 `{current_meaning}` 입니다! 💡")
                 st.session_state.current_index += 1
                 st.session_state.user_answer = ""
-                st.experimental_rerun()
+                st.experimental_rerun()  # 새로고침해서 바로 다음 문제로 이동
 
         st.markdown(f"📊 현재 점수: **{st.session_state.score}** / {total} 🎯")
