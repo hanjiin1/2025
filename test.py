@@ -74,18 +74,19 @@ else:
                 "여기에 답을 입력하세요 ✍️", value=st.session_state.user_answer, key="answer_input"
             )
             submit = st.form_submit_button("✅ 제출하기")
-            if submit:
-                if user_answer.strip() == "":
-                    st.warning("⚠️ 답을 입력해주세요!")
+
+        if submit:
+            if user_answer.strip() == "":
+                st.warning("⚠️ 답을 입력해주세요!")
+            else:
+                st.session_state.user_answer = user_answer.strip()
+                if st.session_state.user_answer == current_meaning:
+                    st.success("🎉 정답이에요! 👏👏👏")
+                    st.session_state.score += 1
                 else:
-                    st.session_state.user_answer = user_answer.strip()
-                    if st.session_state.user_answer == current_meaning:
-                        st.success("🎉 정답이에요! 👏👏👏")
-                        st.session_state.score += 1
-                    else:
-                        st.error(f"❌ 아쉽네요! 정답은 👉 `{current_meaning}` 입니다! 💡")
-                    st.session_state.current_index += 1
-                    st.session_state.user_answer = ""
-                    st.experimental_rerun()  # 여기에 추가! 제출 후 새로고침
+                    st.error(f"❌ 아쉽네요! 정답은 👉 `{current_meaning}` 입니다! 💡")
+                st.session_state.current_index += 1
+                st.session_state.user_answer = ""
+                st.experimental_rerun()
 
         st.markdown(f"📊 현재 점수: **{st.session_state.score}** / {total} 🎯")
