@@ -6,6 +6,7 @@ st.set_page_config(page_title="📚 단어 암기 퀴즈", layout="centered")
 st.title("📘 단어 암기 퀴즈 앱")
 st.markdown("🧠 **외워야 할 단어를 입력하면 자동으로 퀴즈를 만들어줄게요!**")
 
+# 세션 상태 초기화
 if "quiz_started" not in st.session_state:
     st.session_state.quiz_started = False
 if "score" not in st.session_state:
@@ -53,41 +54,43 @@ if not st.session_state.quiz_started:
         st.info("📝 먼저 단어 리스트를 입력해 주세요!")
 else:
     total = len(st.session_state.quiz_words)
-    current_word, current_meaning = st.session_state.quiz_words[st.session_state.current_index]
 
-    st.subheader(f"📋 문제 {st.session_state.current_index + 1} / {total}")
-    st.write(f"❓ `{current_word}` 의 뜻은?")
+    # 퀴즈 종료 체크
+    if st.session_state.current_index >= total:
+        st.balloons()
+        st.markdown("---")
+        st.success(f"🎉 퀴즈 완료! 최종 점수: **{st.session_state.score} / {total}**")
+        if st.button("🔄 다시하기"):
+            st.session_state.quiz_started = False
+            st.session_state.score = 0
+            st.session_state.current_index = 0
+            st.session_state.quiz_words = []
+            st.experimental_rerun()
+    else:
+        current_word, current_meaning = st.session_state.quiz_words[st.session_state.current_index]
 
-    with st.form(key="answer_form"):
-        user_answer = st.text_input("답을 입력하세요", value=st.session_state.user_answer, key="answer_input")
-        submit = st.form_submit_button("제출")
-        if submit:
-            if user_answer.strip() == "":
-                st.warning("⚠️ 답을 입력해 주세요!")
-            else:
-                st.session_state.user_answer = user_answer.strip()
-                if st.session_state.user_answer == current_meaning:
-                    st.success("✅ 정답!")
-                    st.session_state.score += 1
+        st.subheader(f"📋 문제 {st.session_state.current_index + 1} / {total}")
+        st.write(f"❓ `{current_word}` 의 뜻은?")
+
+        with st.form(key="answer_form"):
+            user_answer = st.text_input("답을 입력하세요", value=st.session_state.user_answer, key="answer_input")
+            submit = st.form_submit_button("제출")
+            if submit:
+                if user_answer.strip() == "":
+                    st.warning("⚠️ 답을 입력해 주세요!")
                 else:
-                    st.error(f"❌ 오답! 정답은 👉 `{current_meaning}`")
-                st.session_state.current_index += 1
-                st.session_state.user_answer = ""
-                st.session_state.submitted = True
+                    st.session_state.user_answer = user_answer.strip()
+                    if st.session_state.user_answer == current_meaning:
+                        st.success("✅ 정답!")
+                        st.session_state.score += 1
+                    else:
+                        st.error(f"❌ 오답! 정답은 👉 `{current_meaning}`")
+                    st.session_state.current_index += 1
+                    st.session_state.user_answer = ""
+                    st.session_state.submitted = True
 
-    if st.session_state.submitted:
-        st.session_state.submitted = False
-        if st.session_state.current_index >= total:
-            st.balloons()
-            st.markdown("---")
-            st.success(f"🎉 퀴즈 완료! 최종 점수: **{st.session_state.score} / {total}**")
-            if st.button("🔄 다시하기"):
-                st.session_state.quiz_started = False
-                st.session_state.score = 0
-                st.session_state.current_index = 0
-                st.session_state.quiz_words = []
-                st.experimental_rerun()
-        else:
+        if st.session_state.submitted:
+            st.session_state.submitted = False
             st.experimental_rerun()
 
-    st.markdown(f"현재 점수: **{st.session_state.score}** / {total}")
+        st.markdown(f"현재 점수: **{st.session_state.score}** / {total}")
