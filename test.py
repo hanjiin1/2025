@@ -6,7 +6,6 @@ st.set_page_config(page_title="📚 단어 암기 퀴즈", layout="centered")
 st.title("📘 단어 암기 퀴즈 앱")
 st.markdown("🧠 **외워야 할 단어를 입력하면 자동으로 퀴즈를 만들어줄게요!**")
 
-# 세션 상태 초기화
 if "quiz_started" not in st.session_state:
     st.session_state.quiz_started = False
 if "score" not in st.session_state:
@@ -17,8 +16,6 @@ if "quiz_words" not in st.session_state:
     st.session_state.quiz_words = []
 if "user_answer" not in st.session_state:
     st.session_state.user_answer = ""
-if "submitted" not in st.session_state:
-    st.session_state.submitted = False
 
 st.subheader("✍️ 단어 리스트 입력")
 st.markdown("👉 아래 형식으로 입력해 주세요: `단어 : 뜻` (한 줄에 하나씩)")
@@ -41,7 +38,6 @@ def start_quiz():
         st.session_state.current_index = 0
         st.session_state.quiz_started = True
         st.session_state.user_answer = ""
-        st.session_state.submitted = False
         return True
 
 if not st.session_state.quiz_started:
@@ -54,8 +50,8 @@ if not st.session_state.quiz_started:
         st.info("📝 먼저 단어 리스트를 입력해 주세요!")
 else:
     total = len(st.session_state.quiz_words)
-
-    # 퀴즈 종료 체크
+    
+    # 퀴즈 종료 시
     if st.session_state.current_index >= total:
         st.balloons()
         st.markdown("---")
@@ -65,10 +61,9 @@ else:
             st.session_state.score = 0
             st.session_state.current_index = 0
             st.session_state.quiz_words = []
-            st.experimental_rerun()
+            st.session_state.user_answer = ""
     else:
         current_word, current_meaning = st.session_state.quiz_words[st.session_state.current_index]
-
         st.subheader(f"📋 문제 {st.session_state.current_index + 1} / {total}")
         st.write(f"❓ `{current_word}` 의 뜻은?")
 
@@ -87,10 +82,5 @@ else:
                         st.error(f"❌ 오답! 정답은 👉 `{current_meaning}`")
                     st.session_state.current_index += 1
                     st.session_state.user_answer = ""
-                    st.session_state.submitted = True
-
-        if st.session_state.submitted:
-            st.session_state.submitted = False
-            st.experimental_rerun()
 
         st.markdown(f"현재 점수: **{st.session_state.score}** / {total}")
