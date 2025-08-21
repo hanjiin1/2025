@@ -4,9 +4,7 @@ import random
 st.set_page_config(page_title="📚 단어 암기 퀴즈", layout="centered")
 
 st.title("📘✨ 단어 암기 퀴즈 앱 ✨📘")
-st.markdown("🧠 **외워야 할 단어를 입력하면 자동으로 퀴즈를 만들어줄게요!** 🔥🔥")
 
-# 세션 상태 초기화
 if "quiz_started" not in st.session_state:
     st.session_state.quiz_started = False
 if "score" not in st.session_state:
@@ -17,12 +15,8 @@ if "quiz_words" not in st.session_state:
     st.session_state.quiz_words = []
 if "user_answer" not in st.session_state:
     st.session_state.user_answer = ""
-if "answer_submitted" not in st.session_state:
-    st.session_state.answer_submitted = False  # 제출 플래그
 
-# 단어 리스트 입력
 st.subheader("✍️ 단어 리스트 입력 ✍️")
-st.markdown("👉 아래 형식으로 입력해 주세요: `단어 : 뜻` (한 줄에 하나씩) 📋")
 user_input = st.text_area(
     "예시:\nphotosynthesis : 광합성 🌿\nmitochondria : 미토콘드리아 🔋",
     height=200,
@@ -45,10 +39,8 @@ def start_quiz():
         st.session_state.current_index = 0
         st.session_state.quiz_started = True
         st.session_state.user_answer = ""
-        st.session_state.answer_submitted = False
         return True
 
-# 퀴즈 시작 전 화면
 if not st.session_state.quiz_started:
     if user_input:
         if st.button("🚀 퀴즈 시작하기!"):
@@ -58,7 +50,6 @@ if not st.session_state.quiz_started:
     else:
         st.info("📝 먼저 단어 리스트를 입력해 주세요! ✏️")
 
-# 퀴즈 진행 중
 else:
     total = len(st.session_state.quiz_words)
 
@@ -67,13 +58,12 @@ else:
         st.markdown("---")
         st.success(f"🎉 축하합니다! 퀴즈 완료! 🏆 최종 점수: **{st.session_state.score} / {total}** 🎯")
         if st.button("🔄 다시 도전하기!"):
-            # 초기화
             st.session_state.quiz_started = False
             st.session_state.score = 0
             st.session_state.current_index = 0
             st.session_state.quiz_words = []
             st.session_state.user_answer = ""
-            st.session_state.answer_submitted = False
+
     else:
         current_word, current_meaning = st.session_state.quiz_words[st.session_state.current_index]
         st.subheader(f"📋 문제 {st.session_state.current_index + 1} / {total} 📝")
@@ -97,11 +87,6 @@ else:
                     st.error(f"❌ 아쉽네요! 정답은 👉 `{current_meaning}` 입니다! 💡")
                 st.session_state.current_index += 1
                 st.session_state.user_answer = ""
-                st.session_state.answer_submitted = True  # 제출 플래그 설정
-
-        # 폼 바깥에서 제출 플래그 감지 → 새로고침
-        if st.session_state.answer_submitted:
-            st.session_state.answer_submitted = False
-            st.experimental_rerun()
-
+                st.experimental_rerun()
+        
         st.markdown(f"📊 현재 점수: **{st.session_state.score}** / {total} 🎯")
