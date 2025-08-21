@@ -87,6 +87,6 @@ else:
                     st.error(f"❌ 아쉽네요! 정답은 👉 `{current_meaning}` 입니다! 💡")
                 st.session_state.current_index += 1
                 st.session_state.user_answer = ""
-                st.experimental_rerun()
-        
+                # 여기에 st.experimental_rerun() 대신 그냥 함수 끝내고 UI 다시 렌더링
+
         st.markdown(f"📊 현재 점수: **{st.session_state.score}** / {total} 🎯")
